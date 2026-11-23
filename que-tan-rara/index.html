@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Qué tan rara fue esta crisis?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE  everyday explainer, calm and exact: a statistics project told in seven scenes
+   IDEA   a trading-desk screen at night: one TRM tape running behind frosted panels
+   PICTURE each scene's live chart (tape of daily returns, Monte Carlo histogram, shuffle, horizon ratio)
+   COLOUR graphite ground, warm ochre for 2020, steel blue for 2022, chalk ink
+   TYPE   Montserrat 800 for titles and big figures + Inter for text
+   LAYOUT horizontal scenes with snap; each scene: text panel + large chart; under 760px text stacks above chart */
+:root{color-scheme:dark;--bg:#131417;--bg2:#1a1c20;--ink:#ecebe6;--mut:#a3a39d;--am:#d9a056;--bl:#8fa8bf;--ln:rgba(255,255,255,.12);--gl:rgba(30,32,37,.55);--gb:rgba(255,255,255,.10)}
+*{box-sizing:border-box;min-width:0}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow:hidden}
+h1,h2,.big,.num{font-family:Montserrat,system-ui,sans-serif;letter-spacing:-.02em}
+h1{font-size:clamp(40px,7vw,92px);line-height:1;font-weight:800;margin:0 0 18px;text-wrap:balance;max-width:11ch}
+h2{font-size:clamp(28px,3.4vw,44px);line-height:1.05;font-weight:800;margin:0 0 14px;text-wrap:balance}
+p{margin:0 0 12px;max-width:60ch;color:#d6d5cf}
+.mut{color:var(--mut);font-size:14px}
+#bg{position:fixed;inset:-10% -5%;width:130%;height:120%;pointer-events:none;opacity:.5;filter:blur(2px)}
+#grain{position:fixed;inset:0;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+#track{position:fixed;inset:0 0 64px 0;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;scroll-behavior:smooth}
+#track::-webkit-scrollbar{display:none}
+.sc{flex:0 0 100%;height:100%;scroll-snap-align:start;overflow-y:auto;padding:clamp(24px,5vh,56px) max(5vw,16px);display:grid;align-content:center}
+.in{width:100%;max-width:1240px;margin:0 auto;display:grid;gap:24px;grid-template-columns:minmax(0,5fr) minmax(0,8fr);align-items:stretch}
+.in.rev{grid-template-columns:minmax(0,8fr) minmax(0,5fr)}
+.in.rev>.txt{order:2}
+.in.full{grid-template-columns:minmax(0,1fr)}
+.glass{background:var(--gl);border:1px solid var(--gb);border-radius:18px;backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);padding:clamp(18px,2.2vw,28px)}
+.txt{display:flex;flex-direction:column;justify-content:center}
+.fig{position:relative;min-height:340px;height:min(56vh,480px)}
+.fig>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+svg text{font:13px Inter,sans-serif;fill:var(--mut);paint-order:stroke;stroke:#1b1d21;stroke-width:4px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:6px 0 14px}
+button,.chip{font:600 15px Inter,sans-serif;color:var(--ink);background:rgba(255,255,255,.06);border:1px solid var(--gb);border-radius:999px;min-height:44px;padding:0 18px;cursor:pointer;transition:background .2s,border-color .2s}
+button:hover{background:rgba(255,255,255,.12)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--am);outline-offset:3px}
+button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.go{background:var(--am);color:#1a1307;border-color:var(--am)}
+button.go:hover{background:#e6b16c}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(7.5em,1fr));gap:14px;margin-top:8px}
+.stats div{border-top:1px solid var(--ln);padding-top:8px}
+.num{font-size:clamp(24px,2.6vw,32px);font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.big{font-size:clamp(64px,10vw,132px);font-weight:800;line-height:.95;white-space:nowrap;font-variant-numeric:tabular-nums}
+.lab{font-size:14px;color:var(--mut)}
+.am{color:var(--am)}.bl{color:var(--bl)}
+.hero{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:32px;align-items:end;max-width:1240px;margin:0 auto;width:100%}
+.duo{display:grid;gap:18px}
+.duo .glass .big{font-size:clamp(52px,7vw,96px)}
+.hint{margin-top:22px;color:var(--mut);font-size:15px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:4px;background:linear-gradient(90deg,var(--am) var(--p,0%),rgba(255,255,255,.18) var(--p,0%))}
+input[type=range]::-moz-range-track{height:4px;border-radius:4px;background:rgba(255,255,255,.18)}
+input[type=range]::-moz-range-progress{height:4px;background:var(--am)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--ink);margin-top:-9px;border:3px solid var(--am)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--ink);border:3px solid var(--am)}
+.sw{display:flex;gap:12px;align-items:center;min-height:44px;cursor:pointer;font-weight:600}
+.sw input{appearance:none;-webkit-appearance:none;width:52px;height:30px;border-radius:30px;background:rgba(255,255,255,.18);position:relative;margin:0;cursor:pointer;transition:background .2s}
+.sw input::after{content:"";position:absolute;top:4px;left:4px;width:22px;height:22px;border-radius:50%;background:var(--ink);transition:transform .25s}
+.sw input:checked{background:var(--am)}
+.sw input:checked::after{transform:translateX(22px)}
+ul.c{list-style:none;padding:0;margin:0;display:grid;gap:14px}
+ul.c li{border-top:1px solid var(--ln);padding-top:12px}
+ul.c b{font-family:Montserrat,sans-serif;font-size:19px;display:block;margin-bottom:4px}
+nav{position:fixed;left:0;right:0;bottom:0;height:64px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 max(5vw,16px);border-top:1px solid var(--ln);background:rgba(19,20,23,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+#dots{display:flex;gap:4px}
+#dots button{width:44px;min-height:44px;padding:0;border:0;background:none;display:grid;place-items:center}
+#dots button::before{content:"";width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.28);transition:all .3s}
+#dots button[aria-current=true]::before{width:22px;border-radius:6px;background:var(--am)}
+#lbl{font-size:14px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.arr{width:44px;padding:0;font-size:18px}
+@media(max-width:760px){
+ .in,.in.rev,.hero{grid-template-columns:minmax(0,1fr)}
+ .in.rev>.txt{order:0}
+ .sc{align-content:start}
+ .fig{height:340px}
+ #lbl{display:none}
+ .in.m{display:flex;flex-direction:column;gap:14px}
+ .in.m>.txt{display:contents}
+ .in.m>.txt>h2{order:0;margin:0}
+ .in.m>.glass:not(.txt){order:1}
+ .in.m>.txt>*:not(h2){order:2;margin-top:0}
+ .in.m .fig{height:300px;min-height:300px}
+}
+@media(prefers-reduced-motion:reduce){#track{scroll-behavior:auto}*{transition:none!important}}
+</style>
+</head>
+<body>
+<svg id="bg" aria-hidden="true" preserveAspectRatio="none"></svg>
+<div id="grain" aria-hidden="true"></div>
+
+<main id="track">
+<!-- 1 -->
+<section class="sc" data-l="Inicio">
+ <div class="hero">
+  <div class="px">
+   <h1>¿Qué tan rara fue esta crisis?</h1>
+   <p>El dólar en Colombia, día por día, en 2020 y en 2022. Las dos crisis movieron la TRM, pero de formas muy distintas. Aquí puedes repetir las pruebas del proyecto con los datos reales.</p>
+   <p class="hint">Desliza hacia el lado, usa las flechas del teclado o los puntos de abajo.</p>
+  </div>
+  <div class="duo">
+   <div class="glass"><div class="big am" id="h20">5,93 %</div><div class="lab" id="h20l">lo que subió el dólar en un solo día de 2020</div></div>
+   <div class="glass"><div class="big bl">18,9 %</div><div class="lab" id="h22l">lo que subió en todo 2022, sin ningún día así</div></div>
+  </div>
+ </div>
+</section>
+
+<!-- 2 -->
+<section class="sc" data-l="Cada día del año">
+ <div class="in m">
+  <div class="txt glass px">
+   <h2>Así se movió el dólar cada día</h2>
+   <p>Cada barra es el rendimiento logarítmico de un día: hacia arriba, el peso se devaluó. Las barras en color pasaron del 2 %.</p>
+   <div class="row" role="group" aria-label="Año" id="yrs"></div>
+   <div class="stats">
+    <div><div class="num" id="sSd"></div><div class="lab">volatilidad diaria (σ)</div></div>
+    <div><div class="num" id="sG2"></div><div class="lab">curtosis en exceso (g₂)</div></div>
+    <div><div class="num" id="sN2"></div><div class="lab">días por encima del 2 %</div></div>
+   </div>
+  </div>
+  <div class="glass"><div class="fig"><svg id="cTape" role="img" aria-label="Rendimientos diarios del año elegido"></svg></div></div>
+ </div>
+</section>
+
+<!-- 3 -->
+<section class="sc" data-l="Monte Carlo">
+ <div class="in rev m">
+  <div class="txt glass px">
+   <h2>Si el dólar fuera normal, ¿cuántas veces saldría 7,48?</h2>
+   <p>Simulamos 10.000 años de 238 días con rendimientos normales y calculamos la curtosis de cada uno. Luego contamos cuántos llegan a la de 2020.</p>
+   <div class="row"><button class="go" id="bMC">Simular 10.000 años</button></div>
+   <div class="stats">
+    <div><div class="num" id="mS">0</div><div class="lab">años simulados</div></div>
+    <div><div class="num am" id="mK">0</div><div class="lab">con g₂ ≥ 7,48</div></div>
+    <div><div class="num" id="mP">—</div><div class="lab">p = (k+1)/(S+1)</div></div>
+   </div>
+   <p class="mut" style="margin-top:14px">Con semilla fija: cada vez que simules sale exactamente lo mismo. Ningún año normal llega a 7,48, así que p = 1/10.001 ≈ 0,0001, el menor valor posible con S = 10.000, igual que en el informe.</p>
+  </div>
+  <div class="glass"><div class="fig"><svg id="cMC" role="img" aria-label="Histograma de curtosis simuladas con la de 2020 y 2022 marcadas"></svg></div></div>
+ </div>
+</section>
+
+<!-- 4 -->
+<section class="sc" data-l="Tres días">
+ <div class="in m">
+  <div class="txt glass px">
+   <h2>Tres días cargan casi toda la curtosis</h2>
+   <p>Quita el 9, el 12 y el 16 de marzo de 2020 y mira qué le pasa a la cola. De 238 días, solo tres explican por qué 2020 parece tan anormal.</p>
+   <label class="sw"><input type="checkbox" id="tg"> Quitar 9, 12 y 16 de marzo</label>
+   <div style="margin-top:14px"><div class="big am" id="kBig">7,48</div><div class="lab" id="kLab">g₂ de 2020 con los 238 días</div></div>
+   <p class="mut" style="margin-top:12px">Para comparar: 2022 tiene 0,75. Sin esos tres días, 2020 queda en 0,32, por debajo de 2022.</p>
+  </div>
+  <div class="glass"><div class="fig"><svg id="cTop" role="img" aria-label="Rendimientos de 2020 con los tres días más extremos marcados"></svg></div></div>
+ </div>
+</section>
+
+<!-- 5 -->
+<section class="sc" data-l="Barajar">
+ <div class="in rev m">
+  <div class="txt glass px">
+   <h2>¿Fue mala suerte con el orden?</h2>
+   <p>Barajamos los 238 días de 2020 como cartas: mismos días, otro orden. Si las peores rachas fueran casualidad, saldrían seguido en los años barajados.</p>
+   <div class="row" role="group" aria-label="Ventana" id="wins"></div>
+   <div class="row"><button class="go" id="bSh">Barajar 10.000 veces</button></div>
+   <div class="stats">
+    <div><div class="num am" id="shO"></div><div class="lab">peor racha real</div></div>
+    <div><div class="num" id="shK">—</div><div class="lab">barajados que la igualan</div></div>
+    <div><div class="num" id="shP">—</div><div class="lab" id="shPl">valor-p aquí</div></div>
+   </div>
+   <p class="mut" style="margin-top:14px" id="shRep"></p>
+  </div>
+  <div class="glass"><div class="fig"><svg id="cSh" role="img" aria-label="Peores rachas en años barajados frente a la real"></svg></div></div>
+ </div>
+</section>
+
+<!-- 6 -->
+<section class="sc" data-l="Horizonte">
+ <div class="in m">
+  <div class="txt glass px">
+   <h2>El susto se diluye con el plazo</h2>
+   <p>Comparamos la peor subida acumulada en <b id="hTxt">1 día</b> con lo que el VaR normal al 99 % permitía: hμ + 2,326·σ·√h. Sobre la línea punteada, la normal se quedó corta.</p>
+   <label for="hR" class="lab">Días de exposición: <b id="hVal" style="color:var(--ink)">1</b></label>
+   <input type="range" id="hR" min="1" max="120" value="1">
+   <div class="stats">
+    <div><div class="big am" id="r20" style="font-size:clamp(44px,5vw,72px)"></div><div class="lab">2020: peor racha / VaR</div></div>
+    <div><div class="big bl" id="r22" style="font-size:clamp(44px,5vw,72px)"></div><div class="lab">2022: peor racha / VaR</div></div>
+   </div>
+  </div>
+  <div class="glass"><div class="fig"><svg id="cH" role="img" aria-label="Razón peor racha sobre VaR según días de exposición, 2020 y 2022"></svg></div></div>
+ </div>
+</section>
+
+<!-- 7 -->
+<section class="sc" data-l="Lo que encontramos">
+ <div class="in">
+  <div class="txt px">
+   <h2>Dos crisis, dos formas de ser rara</h2>
+   <p>En 2020 el peligro fue un golpe corto y concentrado; en 2022 fue una subida larga y sin sobresaltos. Una sola cifra de volatilidad no distingue las dos.</p>
+   <p class="mut" style="margin-top:18px">Esneider Chacón, Yancarlo Quitián, Juan José Bustos y Karol Urbano.<br>MATE 2509 Estadística Matemática, Universidad de los Andes. Prof. Roberto Ortiz S.<br>Datos: TRM diaria, Banco de la República.</p>
+  </div>
+  <div class="glass">
+   <ul class="c">
+    <li><b>2020 tuvo colas pesadas</b>g₂ = 7,48: ningún año normal simulado llega ahí.</li>
+    <li><b>Pero se apoya en tres días</b>Sin el 9, 12 y 16 de marzo, la curtosis baja a 0,32.</li>
+    <li><b>Y esos días llegaron juntos</b>Las peores semanas de 2020 casi nunca salen al barajar el orden.</li>
+    <li><b>En plazos largos, la normal alcanza</b>La razón contra el VaR pasa de 2,5× a 1 día a menos de 1 a los 120 días.</li>
+   </ul>
+  </div>
+ </div>
+</section>
+</main>
+
+<nav>
+ <button class="arr" id="prev" aria-label="Escena anterior">←</button>
+ <div id="dots" role="tablist" aria-label="Escenas"></div>
+ <span id="lbl"></span>
+ <button class="arr" id="next" aria-label="Escena siguiente">→</button>
+</nav>
+
+<script>
+{
+const D={"2019":{"f":["01-02","01-03","01-04","01-08","01-09","01-10","01-11","01-14","01-15","01-16","01-17","01-18","01-22","01-23","01-24","01-25","01-28","01-29","01-30","01-31","02-01","02-04","02-05","02-06","02-07","02-08","02-11","02-12","02-13","02-14","02-15","02-19","02-20","02-21","02-22","02-25","02-26","02-27","02-28","03-01","03-04","03-05","03-06","03-07","03-08","03-11","03-12","03-13","03-14","03-15","03-18","03-19","03-20","03-21","03-22","03-26","03-27","03-28","03-29","04-01","04-02","04-03","04-04","04-05","04-08","04-09","04-10","04-11","04-12","04-15","04-16","04-17","04-22","04-23","04-24","04-25","04-26","04-29","04-30","05-02","05-03","05-06","05-07","05-08","05-09","05-10","05-13","05-14","05-15","05-16","05-17","05-20","05-21","05-22","05-23","05-24","05-28","05-29","05-30","05-31","06-04","06-05","06-06","06-07","06-10","06-11","06-12","06-13","06-14","06-17","06-18","06-19","06-20","06-21","06-25","06-26","06-27","06-28","07-02","07-03","07-05","07-08","07-09","07-10","07-11","07-12","07-15","07-16","07-17","07-18","07-19","07-22","07-23","07-24","07-25","07-26","07-29","07-30","07-31","08-01","08-02","08-05","08-06","08-08","08-09","08-12","08-13","08-14","08-15","08-16","08-20","08-21","08-22","08-23","08-26","08-27","08-28","08-29","08-30","09-03","09-04","09-05","09-06","09-09","09-10","09-11","09-12","09-13","09-16","09-17","09-18","09-19","09-20","09-23","09-24","09-25","09-26","09-27","09-30","10-01","10-02","10-03","10-04","10-07","10-08","10-09","10-10","10-11","10-15","10-16","10-17","10-18","10-21","10-22","10-23","10-24","10-25","10-28","10-29","10-30","10-31","11-01","11-05","11-06","11-07","11-08","11-12","11-13","11-14","11-15","11-18","11-19","11-20","11-21","11-22","11-25","11-26","11-27","11-29","12-02","12-03","12-04","12-05","12-06","12-09","12-10","12-11","12-12","12-13","12-16","12-17","12-18","12-19","12-20","12-23","12-24","12-26","12-27","12-30"],"r":[8e-05,-0.00271,-0.01012,-0.01375,-0.01166,0.00269,0.00477,-0.00263,-0.00177,-0.00406,0.00486,-0.00627,0.00512,0.00304,0.00456,-0.00315,0.00547,-0.00327,0.00188,-0.01521,-0.00421,-0.00427,0.0015,0.00467,0.00062,0.00176,0.00534,-0.00048,0.00142,0.00627,-0.00441,-0.00736,-0.00198,0.00232,-0.00293,-0.00286,-0.00198,-0.00755,0.00174,0.00458,0.00074,0.00172,0.00227,0.00446,0.01349,0.00188,-0.00479,-0.00244,-0.00035,-0.00675,-0.00676,-0.00221,-0.00097,-0.00322,0.01409,0.00617,0.01291,0.00141,-0.00507,-0.00885,-0.0011,-0.00475,0.00138,-0.0021,-0.00352,-0.00322,-0.00308,0.00588,-0.00148,0.00876,0.00768,-0.00012,-0.00332,0.00883,0.01104,0.00767,-0.00315,0.00616,-0.00424,0.00868,-0.00668,0.00419,0.01063,0.0004,0.00106,-0.00588,0.00752,-0.00421,0.00315,-0.00159,0.0071,0.00856,0.00067,-0.00104,0.00829,-0.00295,0.00108,0.0038,-0.00519,0.00574,-0.02118,-0.00288,-0.00248,-0.00426,-0.00541,-0.00231,0.00458,0.00069,0.00122,0.00486,-0.00661,-0.00493,-0.01454,-0.00339,-0.00126,-0.00289,0.00605,0.00264,0.00168,-0.00129,0.00319,-0.00296,0.00498,-0.00334,-0.00481,-0.00224,0.0001,0.00284,-0.00329,-0.00195,-0.00425,0.0026,0.00322,0.00209,0.00575,0.00626,0.0091,0.01038,-0.00154,0.01131,0.01092,0.02746,-0.00818,-0.01074,-0.00351,0.01571,-0.00833,0.01211,-0.00044,-0.00185,-0.00595,-0.01049,-0.00245,0.00678,0.00963,0.00727,0.00566,-0.00385,-0.0107,0.0033,-0.01099,-0.00698,-0.00466,0.00211,0.00147,-0.00038,-0.00395,-0.00091,0.00246,0.00489,-0.00093,-2e-05,0.00726,0.01037,0.00026,0.00359,-0.00445,0.00763,0.00445,0.00397,0.00173,-0.00854,-0.01082,0.0045,0.00197,0.00058,0.00112,-0.00783,0.00577,0.00238,0.00168,-0.01065,0.00412,-0.00363,-0.00614,-0.00635,0.00222,-0.00385,-0.00038,0.00267,-0.00196,-0.01312,-0.00622,0.00035,0.00222,0.0042,0.01285,0.0169,0.00313,-0.00914,0.00771,-0.00385,0.00333,-0.00154,-0.00873,0.00677,0.01016,0.00973,0.00557,-0.00401,-0.00049,-0.00805,-0.00536,-0.00861,-0.00345,4e-05,-0.00907,-0.00459,0.00061,-0.00298,-0.00488,-0.00536,-0.00228,0.00093,-0.00257,-0.00335,-0.00742,0.00385,-0.00515]},"2020":{"f":["01-02","01-03","01-07","01-08","01-09","01-10","01-13","01-14","01-15","01-16","01-17","01-21","01-22","01-23","01-24","01-27","01-28","01-29","01-30","01-31","02-03","02-04","02-05","02-06","02-07","02-10","02-11","02-12","02-13","02-14","02-18","02-19","02-20","02-21","02-24","02-25","02-26","02-27","02-28","03-02","03-03","03-04","03-05","03-06","03-09","03-10","03-11","03-12","03-13","03-16","03-17","03-18","03-19","03-20","03-24","03-25","03-26","03-27","03-30","03-31","04-01","04-02","04-03","04-06","04-07","04-08","04-13","04-14","04-15","04-16","04-17","04-20","04-21","04-22","04-23","04-24","04-27","04-28","04-29","04-30","05-04","05-05","05-06","05-07","05-08","05-11","05-12","05-13","05-14","05-15","05-18","05-19","05-20","05-21","05-22","05-26","05-27","05-28","05-29","06-01","06-02","06-03","06-04","06-05","06-08","06-09","06-10","06-11","06-12","06-16","06-17","06-18","06-19","06-23","06-24","06-25","06-26","06-30","07-01","07-02","07-03","07-06","07-07","07-08","07-09","07-10","07-13","07-14","07-15","07-16","07-17","07-21","07-22","07-23","07-24","07-27","07-28","07-29","07-30","07-31","08-03","08-04","08-05","08-06","08-10","08-11","08-12","08-13","08-14","08-18","08-19","08-20","08-21","08-24","08-25","08-26","08-27","08-28","08-31","09-01","09-02","09-03","09-04","09-08","09-09","09-10","09-11","09-14","09-15","09-16","09-17","09-18","09-21","09-22","09-23","09-24","09-25","09-28","09-29","09-30","10-01","10-02","10-05","10-06","10-07","10-08","10-09","10-13","10-14","10-15","10-16","10-19","10-20","10-21","10-22","10-23","10-26","10-27","10-28","10-29","10-30","11-03","11-04","11-05","11-06","11-09","11-10","11-12","11-13","11-17","11-18","11-19","11-20","11-23","11-24","11-25","11-27","11-30","12-01","12-02","12-03","12-04","12-07","12-09","12-10","12-11","12-14","12-15","12-16","12-17","12-18","12-21","12-22","12-23","12-24","12-28","12-29","12-30"],"r":[-0.0056,0.00098,0.00068,-0.00302,-0.00016,0.00574,0.0047,-0.00281,0.00545,0.00504,0.00222,0.00814,-0.00303,0.00478,0.00365,0.00958,-0.00171,0.00074,0.0048,0.00345,-0.00635,-0.00966,-0.00399,0.00683,0.00882,0.00952,-0.00235,-0.01116,-0.00286,-0.00202,0.00941,-0.00272,0.00074,-0.0016,0.00982,-0.00186,0.00485,0.01877,0.00929,-0.00785,-0.01625,0.00084,0.01832,0.0175,0.05931,-0.00612,0.01438,0.05071,-0.02325,0.0393,-0.0136,0.02051,0.00616,-0.01796,0.00609,-0.00453,-0.0224,0.01169,0.00543,-0.00253,0.00652,-0.00382,-0.01405,-0.00761,-0.0173,-0.00599,-0.00425,-0.00313,0.0161,0.00562,0.00762,-0.00133,0.01928,-0.00175,-0.00422,0.0047,-1e-05,0.00154,-0.01563,-0.01278,0.01448,-0.01618,0.00902,-0.00941,-0.01083,0.0049,-0.00536,0.00535,0.01185,-0.00552,-0.01929,-0.00698,-0.00529,-0.00788,0.00223,-0.01521,0.00488,-0.00546,-0.00124,-0.00066,-0.01763,-0.01727,0.00239,-0.00905,0.00948,0.01216,0.00869,0.01931,0.00312,-0.00434,0.00191,0.00298,-0.00719,-0.00732,0.00436,0.00366,0.00613,-0.0007,-0.00872,-0.0172,-0.00391,-0.00346,-0.00049,-0.00163,0.00215,-0.00488,0.00041,0.00579,-0.00734,0.00449,0.00661,-0.00652,-0.00025,0.00902,0.00834,-0.00316,0.01068,-0.00048,0.00606,-0.00172,0.00941,0.0065,-0.0045,-0.00166,0.00015,-0.00556,0.00168,0.00304,0.00426,0.00026,-0.00461,0.00672,0.00922,0.00428,0.00613,-0.00536,-0.00691,-0.01577,-0.00399,-0.01673,-0.00806,-0.00013,0.01343,0.01464,-0.01069,-0.00458,0.00235,-0.00324,-0.00366,0.00551,0.00291,0.00288,0.01734,0.00599,0.0131,0.00264,-0.00155,-0.00205,0.00492,-0.00348,-0.006,0.01022,-0.00985,-0.00443,0.00288,0.00051,-0.00404,0.00835,-0.00331,0.00283,-0.00208,-0.00097,-0.00312,-0.01215,-0.00206,0.00157,0.00794,-0.00068,0.00816,0.0021,0.00234,-0.00914,-0.00428,-0.01144,-0.00683,-0.02493,0.00119,-0.00117,-0.00172,-0.00131,0.00344,-0.00017,0.00077,-0.00466,0.00284,-0.00629,-0.00248,-0.00544,-0.00931,-0.00715,-0.01476,-0.00402,0.0058,-0.0063,-0.00488,-0.00449,-0.00189,-0.00132,-0.00182,-0.00158,0.00276,0.00646,0.00072,0.01086,0.00323,0.00046,-0.00381,-0.01435]},"2022":{"f":["01-03","01-04","01-05","01-06","01-07","01-11","01-12","01-13","01-14","01-18","01-19","01-20","01-21","01-24","01-25","01-26","01-27","01-28","01-31","02-01","02-02","02-03","02-04","02-07","02-08","02-09","02-10","02-11","02-14","02-15","02-16","02-17","02-18","02-22","02-23","02-24","02-25","02-28","03-01","03-02","03-03","03-04","03-07","03-08","03-09","03-10","03-11","03-14","03-15","03-16","03-17","03-18","03-22","03-23","03-24","03-25","03-28","03-29","03-30","03-31","04-01","04-04","04-05","04-06","04-07","04-08","04-11","04-12","04-13","04-18","04-19","04-20","04-21","04-22","04-25","04-26","04-27","04-28","04-29","05-02","05-03","05-04","05-05","05-06","05-09","05-10","05-11","05-12","05-13","05-16","05-17","05-18","05-19","05-20","05-23","05-24","05-25","05-26","05-27","05-31","06-01","06-02","06-03","06-06","06-07","06-08","06-09","06-10","06-13","06-14","06-15","06-16","06-17","06-21","06-22","06-23","06-24","06-28","06-29","06-30","07-01","07-05","07-06","07-07","07-08","07-11","07-12","07-13","07-14","07-15","07-18","07-19","07-21","07-22","07-25","07-26","07-27","07-28","07-29","08-01","08-02","08-03","08-04","08-05","08-08","08-09","08-10","08-11","08-12","08-16","08-17","08-18","08-19","08-22","08-23","08-24","08-25","08-26","08-29","08-30","08-31","09-01","09-02","09-06","09-07","09-08","09-09","09-12","09-13","09-14","09-15","09-16","09-19","09-20","09-21","09-22","09-23","09-26","09-27","09-28","09-29","09-30","10-03","10-04","10-05","10-06","10-07","10-11","10-12","10-13","10-14","10-18","10-19","10-20","10-21","10-24","10-25","10-26","10-27","10-28","10-31","11-01","11-02","11-03","11-04","11-08","11-09","11-10","11-15","11-16","11-17","11-18","11-21","11-22","11-23","11-25","11-28","11-29","11-30","12-01","12-02","12-05","12-06","12-07","12-09","12-12","12-13","12-14","12-15","12-16","12-19","12-20","12-21","12-22","12-23","12-27","12-28","12-29"],"r":[0.0252,0.00033,-0.01028,-0.00075,0.00103,-0.0079,-0.01042,-0.00497,0.01089,0.0099,-0.00732,-0.0058,-0.00415,0.00333,0.00246,-0.00995,-0.00096,0.00973,-0.01006,-0.00486,0.00113,0.00607,0.00271,0.00029,0.0004,-0.0066,-0.00549,-6e-05,0.00546,0.00201,0.00426,-0.00264,-0.0066,0.00131,-0.00474,0.00673,-0.00753,-9e-05,-0.00222,-0.00996,-0.02389,0.00906,0.00192,-0.0069,-0.01082,0.01051,0.01094,-0.00702,0.00935,-0.00252,-0.00274,0.00111,-0.0145,-0.0024,0.01119,-0.00349,1e-05,-0.00523,-0.00474,0.0021,0.00498,-0.01814,0.00453,0.00608,0.00674,0.00148,-0.00884,-0.00199,0.00017,-0.00161,0.00656,0.00075,0.00024,0.01571,0.02908,0.00403,0.00498,0.00439,-0.00465,0.00949,0.00306,0.00993,0.00729,-0.0079,0.00782,0.00023,-0.00156,0.00718,0.0002,-0.00985,-0.00898,0.00516,-0.00095,-0.01518,-0.00995,0.00528,-0.00308,-0.00714,-0.00473,-0.03533,0.00402,-0.00178,-0.00353,0.00736,-0.00227,-0.00217,0.01331,0.02044,0.02623,-0.0093,-0.014,-0.00301,-0.00182,0.03073,-0.0001,0.01043,0.01491,-0.00977,0.00919,0.00574,0.01139,0.01444,0.02064,0.00482,0.00424,0.02809,0.02498,-0.01511,-0.00846,-0.02782,-0.01842,-0.0028,0.02451,0.00311,0.0085,-0.00373,-0.00547,-0.01029,-0.01734,-0.01271,0.01573,0.00413,-0.01462,0.01603,-0.00698,0.0006,-0.00836,-0.00996,-0.01092,0.00785,0.02296,0.02231,-0.00309,-0.00025,-0.00563,0.00131,0.00632,-0.00453,-0.00043,0.00319,0.00513,0.00996,-7e-05,0.00299,-0.00756,-0.01123,-0.00716,-0.00423,0.01529,-0.00547,0.00337,0.00706,-0.00468,0.00119,-0.00375,-0.00547,0.0106,0.01581,0.01313,-0.01537,0.01001,0.01282,-0.00982,-0.01349,0.0142,0.01716,-0.00483,0.00143,-0.00015,0.00186,0.00368,0.02286,0.01487,0.01452,0.00566,0.01127,-0.00419,-0.01074,-0.0151,-0.00052,0.01632,0.01556,0.00806,0.00837,0.00063,-0.00953,-0.01984,-0.02235,-0.00104,0.02502,0.01998,-0.00547,-0.00727,-0.00893,-0.00785,0.00113,-0.0084,-0.00644,0.00126,-0.00761,-0.00249,0.00943,0.00124,0.00156,-0.00204,0.0042,-0.00928,-0.00278,0.00391,0.00114,-0.00442,-0.00251,-0.00161,-0.00022,-0.00328,0.00458,-0.00019,0.00925]},"2023":{"f":["01-03","01-04","01-05","01-06","01-10","01-11","01-12","01-13","01-17","01-18","01-19","01-20","01-23","01-24","01-25","01-26","01-27","01-30","01-31","02-01","02-02","02-03","02-06","02-07","02-08","02-09","02-10","02-13","02-14","02-15","02-16","02-17","02-21","02-22","02-23","02-24","02-27","02-28","03-01","03-02","03-03","03-06","03-07","03-08","03-09","03-10","03-13","03-14","03-15","03-16","03-17","03-21","03-22","03-23","03-24","03-27","03-28","03-29","03-30","03-31","04-03","04-04","04-05","04-10","04-11","04-12","04-13","04-14","04-17","04-18","04-19","04-20","04-21","04-24","04-25","04-26","04-27","04-28","05-02","05-03","05-04","05-05","05-08","05-09","05-10","05-11","05-12","05-15","05-16","05-17","05-18","05-19","05-23","05-24","05-25","05-26","05-30","05-31","06-01","06-02","06-05","06-06","06-07","06-08","06-09","06-13","06-14","06-15","06-16","06-20","06-21","06-22","06-23","06-26","06-27","06-28","06-29","06-30","07-05","07-06","07-07","07-10","07-11","07-12","07-13","07-14","07-17","07-18","07-19","07-21","07-24","07-25","07-26","07-27","07-28","07-31","08-01","08-02","08-03","08-04","08-08","08-09","08-10","08-11","08-14","08-15","08-16","08-17","08-18","08-22","08-23","08-24","08-25","08-28","08-29","08-30","08-31","09-01","09-05","09-06","09-07","09-08","09-11","09-12","09-13","09-14","09-15","09-18","09-19","09-20","09-21","09-22","09-25","09-26","09-27","09-28","09-29","10-02","10-03","10-04","10-05","10-06","10-10","10-11","10-12","10-13","10-17","10-18","10-19","10-20","10-23","10-24","10-25","10-26","10-27","10-30","10-31","11-01","11-02","11-03","11-07","11-08","11-09","11-10","11-14","11-15","11-16","11-17","11-20","11-21","11-22","11-24","11-27","11-28","11-29","11-30","12-01","12-04","12-05","12-06","12-07","12-11","12-12","12-13","12-14","12-15","12-18","12-19","12-20","12-21","12-22","12-26","12-27","12-28"],"r":[0.00664,0.01674,0.01323,-0.02105,-0.01605,-0.01241,-0.01197,0.00042,-0.00062,0.00247,-0.00401,-0.01121,-0.01756,-0.00112,-0.00155,-0.00158,0.00369,0.01823,0.00356,-0.00208,-0.01184,0.01844,0.02255,-5e-05,-0.00129,-0.00585,0.0075,0.00852,-0.00737,0.01967,0.0179,-0.00959,0.00636,-0.00515,-0.01452,-0.00088,-0.0086,0.00124,0.00718,0.00145,-0.01555,-0.00977,0.00222,0.00224,-0.00147,-0.0001,0.00454,-0.0071,0.02079,0.00639,-0.00872,-0.00415,-0.00589,-0.0044,-0.00281,-0.01165,-0.006,-0.00671,-8e-05,0.00406,-0.00932,-0.00341,-0.00358,-0.00146,-0.01046,-0.0129,-0.00785,0.00028,0.0014,0.00935,0.01318,0.00074,-0.00268,-0.00915,0.00093,0.0146,0.02206,0.00319,0.0094,-0.00981,-0.01088,-0.01396,-0.01371,0.01102,0.00111,0.01219,-0.00801,-0.01278,0.00555,-0.00072,-0.00147,0.00155,-0.00595,-0.01182,0.00491,-0.00205,-0.01195,0.00575,-0.00534,-0.01248,-0.01126,-0.0145,-0.00848,-0.00695,-0.00151,0.00302,-0.00095,-0.00423,-0.00456,0.00083,0.00217,-0.01059,0.01316,0.00083,-0.00477,0.00411,0.00519,-0.00327,-0.01192,0.0163,-0.00142,-0.00861,0.00947,-0.0156,-0.00645,-0.00313,-0.00488,-0.01941,-0.00275,-0.00222,-0.00525,0.00713,-0.00699,-0.00484,-0.00218,-0.00639,0.02757,0.01229,0.02141,-0.01627,-0.00035,-0.01105,-0.01914,0.00459,0.01413,0.01628,0.00833,-0.00884,0.00732,-0.00096,-0.00833,-0.0022,0.00998,-0.00152,-0.00035,-0.00604,0.00339,-0.00878,0.0064,0.00088,-0.0116,-0.00833,-0.00363,-0.00105,-0.01073,-0.00618,0.00043,-0.0057,-0.00087,0.0012,0.01045,0.00011,0.02596,0.00399,0.00609,-0.00196,-0.00782,0.0214,0.01095,0.01542,0.02492,0.00623,-0.0359,-0.00461,0.00429,0.00434,-0.00635,0.00125,0.00527,-0.00256,-0.00413,-0.00176,-0.00296,-0.01115,-0.00829,-0.01462,0.01308,0.00083,-0.01729,-0.01796,0.00751,0.01505,-0.00218,-0.00488,-0.0184,0.00334,0.02498,0.00956,-0.02031,0.0065,0.00789,-0.01175,-0.0136,-0.00808,0.00577,0.01609,-0.01546,0.0042,0.00581,-0.0084,0.00224,-0.00401,0.0021,0.00214,-0.01095,0.00022,-0.00613,-0.00174,0.00578,-0.0014,-0.00702,-0.0113,-0.0069,-0.00594]},"bg":[3250,3128,3138,3137,3168,3103,3110,3136,3112,3095,3094,3162,3144,3092,3186,3143,3115,3109,3150,3228,3240,3294,3296,3344,3362,3306,3257,3271,3202,3197,3217,3198,3189,3188,3263,3366,3383,3448,3377,3478,3401,3374,3364,3402,3436,3497,3453,3451,3443,3395,3383,3327,3453,3446,3469,3507,3418,3374,3322,3281,3262,3273,3313,3354,3395,3369,3441,3378,3398,3507,3458,3780,4100,4080,4043,4066,3887,3943,4038,4046,3926,3901,3926,3774,3723,3589,3643,3742,3706,3756,3633,3616,3628,3660,3717,3793,3749,3784,3844,3760,3653,3700,3704,3813,3860,3882,3840,3854,3785,3810,3823,3646,3635,3633,3592,3467,3433,3411,3483,3432,3459,3470,3477,3637,3535,3555,3516,3555,3588,3677,3599,3576,3553,3665,3646,3650,3620,3639,3717,3817,3765,3728,3722,3747,3642,3588,3691,3784,3713,3777,3829,3809,3867,3902,3914,3988,3830,3875,3871,3753,3816,3831,3851,3845,3813,3788,3726,3771,3774,3779,3874,3899,3913,4011,3948,3888,4003,3998,4004,4084,4012,4033,3978,3983,3952,3939,3947,3932,3910,3806,3786,3827,3757,3766,3707,3777,3731,3819,3985,4056,4087,4070,3990,3931,3785,3783,3979,4027,4090,4260,4513,4396,4424,4376,4331,4310,4218,4399,4388,4467,4397,4390,4420,4497,4591,4628,4620,4886,4895,4976,5013,4923,4914,4810,4812,4836,4802,4761,4810,4886,4694,4632,4532,4639,4776,4819,4919,4850,4856,4756,4736,4804,4687,4646,4564,4425,4536,4553,4667,4540,4506,4529,4462,4356,4180,4165,4114,4170,4196,4129,3991,3979,3898,4078,3973,4094,4077,4085,4093,3994,3906,3949,4086,4252,4212,4227,4214,4061,3975,4037,4117,4045,4045,3990,3999,3926,3871]};
+const $=id=>document.getElementById(id);
+const nf=(x,d=2)=>x.toLocaleString('es-CO',{minimumFractionDigits:d,maximumFractionDigits:d});
+const pct=(x,d=2)=>nf(100*x,d)+' %';
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const fdate=f=>+f.slice(3)+' de '+['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][+f.slice(0,2)-1];
+const mean=a=>a.reduce((s,x)=>s+x,0)/a.length;
+const sd=a=>{const m=mean(a);return Math.sqrt(a.reduce((s,x)=>s+(x-m)**2,0)/(a.length-1))};
+const g2=a=>{const m=mean(a);let m2=0,m4=0;for(const x of a){const d=(x-m)**2;m2+=d;m4+=d*d}m2/=a.length;m4/=a.length;return m4/(m2*m2)-3};
+const maxWin=(a,h)=>{let s=0;for(let i=0;i<h;i++)s+=a[i];let b=s;for(let i=h;i<a.length;i++){s+=a[i]-a[i-h];if(s>b)b=s}return b};
+const draws=[];const obs=(el,f)=>{draws.push(f);const ro=new ResizeObserver(f);ro.observe(el)};
+const col={2019:'#7d8a80',2020:'#d9a056',2022:'#8fa8bf',2023:'#a99aa8'};
+
+/* scene 1 */
+const r20=D[2020].r,f20=D[2020].f;
+const iMax=r20.indexOf(Math.max(...r20));
+$('h20').textContent=pct(r20[iMax]);
+$('h20l').textContent='lo que subió el dólar el '+fdate(f20[iMax])+' de 2020, en un solo día';
+
+/* background tape */
+{const s=$('bg');const v=D.bg,mn=Math.min(...v),mx=Math.max(...v);
+ const pts=v.map((y,i)=>`${(i/(v.length-1)*1000).toFixed(1)},${(560-(y-mn)/(mx-mn)*420).toFixed(1)}`).join(' ');
+ s.setAttribute('viewBox','0 0 1000 600');
+ s.innerHTML=`<defs><linearGradient id="gf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9a056" stop-opacity=".16"/><stop offset="1" stop-color="#d9a056" stop-opacity="0"/></linearGradient></defs><polygon points="0,600 ${pts} 1000,600" fill="url(#gf)"/><polyline points="${pts}" fill="none" stroke="#d9a056" stroke-opacity=".35" stroke-width="1.4" vector-effect="non-scaling-stroke"/>`;}
+
+/* scene 2: tape */
+let yr=2020;
+$('yrs').innerHTML=[2019,2020,2022,2023].map(y=>`<button aria-pressed="${y===yr}" data-y="${y}">${y}</button>`).join('');
+const tape=$('cTape');
+const drawTape=()=>{const W=tape.clientWidth,H=tape.clientHeight;if(!W)return;const r=D[yr].r,f=D[yr].f,n=r.length;
+ const L=W<520?34:44,R=8,T=12,B=26,lim=.065,y0=T+(H-T-B)/2,sc=(H-T-B)/2/lim,bw=(W-L-R)/n;
+ let g='';for(const t of [-.06,-.04,-.02,.02,.04,.06]){const y=y0-t*sc;g+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="rgba(255,255,255,.07)"/><text x="${L-6}" y="${y+4}" text-anchor="end">${t>0?'+':''}${Math.round(t*100)}%</text>`}
+ g+=`<line x1="${L}" x2="${W-R}" y1="${y0}" y2="${y0}" stroke="rgba(255,255,255,.3)"/>`;
+ let lastM='';r.forEach((v,i)=>{const x=L+i*bw,big=Math.abs(v)>.02,h=Math.max(1,Math.abs(v)*sc);
+  g+=`<rect x="${x+bw*.15}" y="${v>0?y0-h:y0}" width="${Math.max(1,bw*.7)}" height="${h}" rx="1" fill="${big?col[yr]:'rgba(236,235,230,.38)'}"><title>${fdate(f[i])}: ${pct(v)}</title></rect>`;
+  const m=f[i].slice(0,2);if(m!==lastM){lastM=m;if(W>=520||+m%3===1)g+=`<text x="${x}" y="${H-6}">${MES[+m-1]}</text>`}});
+ tape.innerHTML=g;
+ $('sSd').textContent=pct(sd(r));$('sG2').textContent=nf(g2(r));$('sN2').textContent=r.filter(v=>Math.abs(v)>.02).length;
+ $('sG2').className='num '+(yr===2020?'am':'');};
+$('yrs').onclick=e=>{const b=e.target.closest('button');if(!b)return;yr=+b.dataset.y;for(const x of $('yrs').children)x.setAttribute('aria-pressed',x===b);drawTape()};
+obs(tape,drawTape);
+
+/* scene 3: Monte Carlo */
+const G20=g2(r20),G22=g2(D[2022].r);
+const NB=100,LO=-1.5,HI=8.5,bins=new Array(NB).fill(0);let S=0,K=0,running=false;
+const mc=$('cMC');
+const drawMC=()=>{const W=mc.clientWidth,H=mc.clientHeight;if(!W)return;const L=12,R=12,T=40,B=28,x=v=>L+(v-LO)/(HI-LO)*(W-L-R),mx=Math.max(1,...bins),bw=(W-L-R)/NB;
+ let g='';for(let t=-1;t<=8;t++)if(W>=520||t%2===0)g+=`<text x="${x(t)}" y="${H-8}" text-anchor="middle">${t}</text>`;
+ g+=`<line x1="${L}" x2="${W-R}" y1="${H-B}" y2="${H-B}" stroke="rgba(255,255,255,.3)"/>`;
+ bins.forEach((c,i)=>{if(!c)return;const h=c/mx*(H-T-B);g+=`<rect x="${L+i*bw+.5}" y="${H-B-h}" width="${Math.max(1,bw-1)}" height="${h}" fill="rgba(236,235,230,.55)"/>`});
+ for(const [v,c,n] of [[G22,'#8fa8bf','2022: '+nf(G22)],[G20,'#d9a056','2020: '+nf(G20)]]){const X=x(v);g+=`<line x1="${X}" x2="${X}" y1="${T-14}" y2="${H-B}" stroke="${c}" stroke-width="2"/><text x="${X+(v>4?-6:6)}" y="${T-18}" text-anchor="${v>4?'end':'start'}" style="fill:${c};font-weight:600">${n}</text>`}
+ if(!S)g+=`<text x="${x(1.6)}" y="${(H-B+T)/2}" text-anchor="middle">Pulsa «Simular» para llenar el histograma</text>`;
+ mc.innerHTML=g;};
+obs(mc,drawMC);
+let sd0=0;const seed=v=>{sd0=v>>>0};const rnd=()=>{sd0=(sd0+0x6D2B79F5)>>>0;let t=sd0;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296};
+const nrm=()=>{let u=0;while(!u)u=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*rnd())};
+$('bMC').onclick=()=>{if(running)return;running=true;seed(20261118);bins.fill(0);S=0;K=0;const a=new Array(238);const step=()=>{for(let j=0;j<(RM?10000:250)&&S<10000;j++){for(let i=0;i<238;i++)a[i]=nrm();const k=g2(a);S++;if(k>=G20)K++;const b=Math.floor((k-LO)/(HI-LO)*NB);if(b>=0&&b<NB)bins[b]++}
+ $('mS').textContent=S.toLocaleString('es-CO');$('mK').textContent=K;$('mP').textContent=nf((K+1)/(S+1),4);drawMC();
+ if(S<10000)requestAnimationFrame(step);else{running=false;$('bMC').textContent='Simular otra vez'}};step()};
+
+/* scene 4: top 3 days */
+const top3=r20.map((v,i)=>[Math.abs(v),i]).sort((a,b)=>b[0]-a[0]).slice(0,3).map(x=>x[1]);
+const G20s=g2(r20.filter((_,i)=>!top3.includes(i)));
+let cut=false,kv=G20;const tp=$('cTop');
+const drawTop=()=>{const W=tp.clientWidth,H=tp.clientHeight;if(!W)return;const L=W<520?34:44,R=8,T=34,B=26,lim=.065,y0=T+(H-T-B)/2,sc=(H-T-B)/2/lim,n=r20.length,bw=(W-L-R)/n;
+ let g='';for(const t of [-.04,-.02,.02,.04,.06]){const y=y0-t*sc;g+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="rgba(255,255,255,.07)"/><text x="${L-6}" y="${y+4}" text-anchor="end">${t>0?'+':''}${Math.round(t*100)}%</text>`}
+ g+=`<line x1="${L}" x2="${W-R}" y1="${y0}" y2="${y0}" stroke="rgba(255,255,255,.3)"/>`;
+ r20.forEach((v,i)=>{const x=L+i*bw,t=top3.includes(i),h=Math.max(1,Math.abs(v)*sc);
+  g+=`<rect x="${x+bw*.15}" y="${v>0?y0-h:y0}" width="${Math.max(1,bw*.7)}" height="${h}" rx="1" fill="${t?'#d9a056':'rgba(236,235,230,.38)'}" style="transition:opacity .5s;opacity:${t&&cut?0.08:1}"/>`;
+  if(t){const dd=+f20[i].slice(3),an=dd===9?'end':dd===12?'middle':'start',dx=dd===9?-6:dd===12?0:6,ty=dd===12?T-14:Math.max(T+4,(v>0?y0-h:y0+h)-6);
+   g+=`<text x="${x+bw/2+dx}" y="${ty}" text-anchor="${an}" style="fill:#d9a056;opacity:${cut?.4:1}">${dd} mar</text>`}});
+ tp.innerHTML=g;};
+obs(tp,drawTop);
+const countTo=(el,a,b)=>{if(RM){el.textContent=nf(b);return}const t0=performance.now();const f=t=>{const k=Math.min(1,(t-t0)/700),e=1-(1-k)**3;el.textContent=nf(a+(b-a)*e);if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)};
+$('tg').onchange=e=>{cut=e.target.checked;const to=cut?G20s:G20;countTo($('kBig'),kv,to);kv=to;$('kLab').textContent=cut?'g₂ de 2020 sin esos tres días (235 días)':'g₂ de 2020 con los 238 días';drawTop()};
+
+/* scene 5: shuffle */
+const REP={5:'0,003',10:'0,001',20:'0,004'};let hw=5,sims=[],shRun=false;const sh=$('cSh');
+$('wins').innerHTML=[5,10,20].map(h=>`<button aria-pressed="${h===hw}" data-h="${h}">${h} días</button>`).join('');
+const setW=()=>{$('shO').textContent=pct(maxWin(r20,hw),1);$('shRep').textContent=`Semilla fija: sale igual cada vez. En el informe (Stata, 10.000 barajadas): p = ${REP[hw]} para la peor ventana de ${hw} días.`;sims=[];$('shK').textContent='—';$('shP').textContent='—';$('bSh').textContent='Barajar 10.000 veces';drawSh()};
+$('wins').onclick=e=>{const b=e.target.closest('button');if(!b||shRun)return;hw=+b.dataset.h;for(const x of $('wins').children)x.setAttribute('aria-pressed',x===b);setW()};
+const drawSh=()=>{const W=sh.clientWidth,H=sh.clientHeight;if(!W)return;const o=maxWin(r20,hw),L=12,R=12,T=40,B=28,lo=0,hi=Math.max(o*1.12,.05),x=v=>L+(v-lo)/(hi-lo)*(W-L-R),nb=Math.max(30,Math.floor((W-L-R)/9)),c=new Array(nb).fill(0);
+ for(const v of sims){const b=Math.min(nb-1,Math.floor((v-lo)/(hi-lo)*nb));c[b]++}
+ const mx=Math.max(1,...c),bw=(W-L-R)/nb;let g='';
+ const step=hi>.12?.04:.02;for(let t=0;t<=hi+1e-9;t+=step)g+=`<text x="${x(t)}" y="${H-8}" text-anchor="middle">${Math.round(t*100)}%</text>`;
+ g+=`<line x1="${L}" x2="${W-R}" y1="${H-B}" y2="${H-B}" stroke="rgba(255,255,255,.3)"/>`;
+ c.forEach((k,i)=>{if(!k)return;const h=k/mx*(H-T-B);g+=`<rect x="${L+i*bw+1}" y="${H-B-h}" width="${Math.max(1,bw-2)}" height="${h}" rx="2" fill="rgba(236,235,230,.55)"/>`});
+ const X=x(o);g+=`<line x1="${X}" x2="${X}" y1="${T-14}" y2="${H-B}" stroke="#d9a056" stroke-width="2"/><text x="${X-6}" y="${T-18}" text-anchor="end" style="fill:#d9a056;font-weight:600">2020 real: ${pct(o,1)}</text>`;
+ if(!sims.length)g+=`<text x="${(L+X)/2}" y="${(H-B+T)/2}" text-anchor="middle">Aquí caerán las peores rachas barajadas</text>`;
+ sh.innerHTML=g;};
+obs(sh,drawSh);
+$('bSh').onclick=()=>{if(shRun)return;shRun=true;seed(20261118+hw);sims=[];const a=r20.slice(),o=maxWin(r20,hw);let k=0;
+ const step=()=>{for(let j=0;j<(RM?10000:250)&&sims.length<10000;j++){for(let i=a.length-1;i>0;i--){const q=Math.floor(rnd()*(i+1));[a[i],a[q]]=[a[q],a[i]]}const m=maxWin(a,hw);sims.push(m);if(m>=o)k++}
+  $('shK').textContent=k+' de '+sims.length.toLocaleString('es-CO');$('shP').textContent=nf((k+1)/(sims.length+1),4);drawSh();
+  if(sims.length<10000)requestAnimationFrame(step);else{shRun=false;$('bSh').textContent='Barajar otra vez'}};step()};
+setW();
+
+/* scene 6: horizon */
+const ratio=y=>{const r=D[y].r,m=mean(r),s=sd(r);return Array.from({length:120},(_,i)=>{const h=i+1;return maxWin(r,h)/(h*m+2.326*s*Math.sqrt(h))})};
+const RA={2020:ratio(2020),2022:ratio(2022)};let H0=1;const ch=$('cH');
+const drawH=()=>{const W=ch.clientWidth,H=ch.clientHeight;if(!W)return;const L=W<520?30:40,R=W<520?40:70,T=16,B=30,top=3,x=h=>L+(h-1)/119*(W-L-R),y=v=>T+(1-v/top)*(H-T-B);
+ let g='';for(const t of [0,.5,1,1.5,2,2.5,3])g+=`<line x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}" stroke="rgba(255,255,255,${t===0?.3:.07})"/><text x="${L-6}" y="${y(t)+4}" text-anchor="end">${nf(t,t%1?1:0)}</text>`;
+ for(const t of [1,20,40,60,80,100,120])if(W>=520||t%40===0||t===1)g+=`<text x="${x(t)}" y="${H-8}" text-anchor="middle">${t}${t===120?' días':''}</text>`;
+ g+=`<line x1="${L}" x2="${W-R}" y1="${y(1)}" y2="${y(1)}" stroke="#ecebe6" stroke-dasharray="5 5" stroke-opacity=".7"/><text x="${W-R+6}" y="${y(1)+4}" text-anchor="start">VaR</text>`;
+ for(const [yy,c] of [[2022,'#8fa8bf'],[2020,'#d9a056']]){const p=RA[yy].map((v,i)=>`${x(i+1).toFixed(1)},${y(v).toFixed(1)}`).join(' ');g+=`<polyline points="${p}" fill="none" stroke="${c}" stroke-width="2" stroke-linejoin="round"/>`;
+  const v=RA[yy][119];g+=`<text x="${x(120)+6}" y="${y(v)+(yy===2020?12:-4)}" style="fill:${c}">${yy}</text>`}
+ const X=x(H0);g+=`<line x1="${X}" x2="${X}" y1="${T}" y2="${H-B}" stroke="rgba(255,255,255,.35)"/>`;
+ for(const [yy,c] of [[2022,'#8fa8bf'],[2020,'#d9a056']])g+=`<circle cx="${X}" cy="${y(RA[yy][H0-1])}" r="6" fill="${c}" stroke="#1b1d21" stroke-width="2"/>`;
+ ch.innerHTML=g;};
+obs(ch,drawH);
+const setH=()=>{H0=+$('hR').value;$('hR').style.setProperty('--p',((H0-1)/119*100)+'%');$('hVal').textContent=H0;$('hTxt').textContent=H0===1?'1 día':H0+' días';$('r20').textContent=nf(RA[2020][H0-1],1)+'×';$('r22').textContent=nf(RA[2022][H0-1],1)+'×';drawH()};
+$('hR').oninput=setH;setH();
+
+/* navigation + parallax */
+const tr=$('track'),sc=[...document.querySelectorAll('.sc')],px=[...document.querySelectorAll('.px')];
+$('dots').innerHTML=sc.map((s,i)=>`<button role="tab" aria-label="${s.dataset.l}" data-i="${i}"></button>`).join('');
+let cur=0;const go=i=>{i=Math.max(0,Math.min(sc.length-1,i));tr.scrollTo({left:i*tr.clientWidth,behavior:RM?'auto':'smooth'})};
+$('dots').onclick=e=>{const b=e.target.closest('button');if(b)go(+b.dataset.i)};
+$('prev').onclick=()=>go(cur-1);$('next').onclick=()=>go(cur+1);
+const onS=()=>{const w=tr.clientWidth||1,sl=tr.scrollLeft,i=Math.round(sl/w);if(i!==cur||!$('lbl').textContent){cur=i;[...$('dots').children].forEach((b,j)=>b.setAttribute('aria-current',j===i));$('lbl').textContent=(i+1)+' / '+sc.length+' · '+sc[i].dataset.l}
+ if(RM)return;$('bg').style.transform=`translateX(${-sl/(w*(sc.length-1)||1)*18}%)`;
+ for(const p of px){const s=p.closest('.sc'),d=(s.offsetLeft-sl)/w;p.style.transform=`translateX(${d*90}px)`;p.style.opacity=1-Math.min(.6,Math.abs(d)*.8)}};
+tr.addEventListener('scroll',()=>requestAnimationFrame(onS),{passive:true});onS();
+let lock=0;tr.addEventListener('wheel',e=>{if(Math.abs(e.deltaX)>Math.abs(e.deltaY)||e.target.closest('input'))return;const s=sc[cur],dn=e.deltaY>0;
+ if(dn&&s.scrollTop+s.clientHeight<s.scrollHeight-2)return;if(!dn&&s.scrollTop>2)return;e.preventDefault();const now=Date.now();if(now-lock<800||Math.abs(e.deltaY)<4)return;lock=now;go(cur+(dn?1:-1))},{passive:false});
+addEventListener('keydown',e=>{if(e.target.matches('input[type=range]'))return;if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();go(cur+1)}if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(cur-1)}});
+addEventListener('resize',()=>{tr.style.scrollBehavior='auto';tr.scrollLeft=cur*tr.clientWidth;tr.style.scrollBehavior=''});
+}
+</script>
+</body>
+</html>
